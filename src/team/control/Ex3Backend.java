@@ -5,6 +5,7 @@ import shared.ui_ports.Ex3UiPort;
 import team.model.Canvas;
 import team.model.Circle;
 import team.model.Point;
+import team.model.Table;
 
 public class Ex3Backend {
 
@@ -24,18 +25,18 @@ public class Ex3Backend {
     public void startScenario() {
         Canvas canvas = App.content().canvas();
 
-        // Tell UI to render objects (IDs only)
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < canvas.getCircleCount(); i++) {
             Circle c = canvas.getCircle(i);
-            ex3UiPort().addCircle(c.getId(), c.getCenter().getX(), c.getCenter().getY(), c.getR());
+            String ballColor = getBallColor(i);
+            ex3UiPort().addCircle(c.getId(), c.getCenter().getX(), c.getCenter().getY(), c.getR(), ballColor);
         }
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < canvas.getPointCount(); i++) {
             Point p = canvas.getPoint(i);
             ex3UiPort().addPoint(p.getId(), p.getX(), p.getY());
         }
 
-        ex3UiPort().log("Scenario started: 3 circles + 2 points.");
+        ex3UiPort().log("Scenario started: " + canvas.getCircleCount() + " balls + " + canvas.getPointCount() + " pocket markers.");
         evaluateAndCommandUi();
     }
 
@@ -65,29 +66,25 @@ public class Ex3Backend {
 
     // Business logic: checks + UI commands
     private void evaluateAndCommandUi() {
-        Circle c0 = App.content().canvas().getCircle(0);
-        Circle c1 = App.content().canvas().getCircle(1);
-        Circle c2 = App.content().canvas().getCircle(2);
+        Canvas canvas = App.content().canvas();
+        Table table = canvas.getTable();
 
-        Point p0 = App.content().canvas().getPoint(0);
-        Point p1 = App.content().canvas().getPoint(1);
+        for (int i = 0; i < canvas.getCircleCount(); i++) {
+            Circle c = canvas.getCircle(i);
+            double left = c.getCenter().getX() - c.getR();
+            double right = c.getCenter().getX() + c.getR();
+            double top = c.getCenter().getY() - c.getR();
+            double bottom = c.getCenter().getY() + c.getR();
 
-        boolean c0InC1 = c0.intersects(c1); // expected true initially
-        boolean c0InC2 = c0.intersects(c2); // expected false initially
+            boolean outOfBounds = table.isOutOfBounds(left, top)
+                    || table.isOutOfBounds(right, top)
+                    || table.isOutOfBounds(left, bottom)
+                    || table.isOutOfBounds(right, bottom);
 
-        boolean p0Inside = c0.contains(p0); // expected true initially
-        boolean p1Inside = c0.contains(p1); // expected false initially
-
-        // Student → UI commands (IDs only)
-        ex3UiPort().paintPoint(0, p0Inside ? "red" : "black");
-        ex3UiPort().paintPoint(1, p1Inside ? "red" : "black");
-
-        if (c0InC1)
-            ex3UiPort().blinkCircle(1, 2);
-        if (c0InC2)
-            ex3UiPort().blinkCircle(2, 2);
-        // ex3UiPort().log("Checks: c1∩c2=" + c1InC2 + " c1∩c3=" + c1InC3 + " p1∈c1=" +
-        // p1Inside + " p2∈c1=" + p2Inside);
+            if (outOfBounds) {
+                ex3UiPort().blinkCircle(i, 1);
+            }
+        }
     }
 
     public void moveCircle2(double dx, double dy) {
@@ -100,5 +97,16 @@ public class Ex3Backend {
 
     public void toggleRunPeriodic() {
          this.runPeriodic = !this.runPeriodic;
+    }
+
+    private String getBallColor(int ballId) {
+        if (ballId == 0) {
+            return "white";
+        } else if (ballId == 5) {
+            return "black";
+        } else {
+            int colorPattern = (ballId - 1) % 2;
+            return colorPattern == 0 ? "red" : "yellow";
+        }
     }
 }

@@ -1,11 +1,11 @@
 package ai.ui;
 
-import shared.ui_ports.Ex3UiPort;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import shared.ui_ports.Ex3UiPort;
 
 public class Ex3UiPortImpl extends Ex3UiPort {
     private Map<String, Point> points;
@@ -38,6 +38,13 @@ public class Ex3UiPortImpl extends Ex3UiPort {
     @Override
     public void addCircle(int circleId, double cx, double cy, double radius) {
         circles.put(String.valueOf(circleId), new Circle((int) cx, (int) cy, (int) radius));
+        panel.repaint();
+    }
+
+    @Override
+    public void addCircle(int circleId, double cx, double cy, double radius, String colorName) {
+        Circle circle = new Circle((int) cx, (int) cy, (int) radius, parseColor(colorName));
+        circles.put(String.valueOf(circleId), circle);
         panel.repaint();
     }
 
@@ -97,17 +104,17 @@ public class Ex3UiPortImpl extends Ex3UiPort {
         try {
             switch (colorStr.toLowerCase()) {
                 case "red":
-                    return Color.RED;
+                    return new Color(200, 50, 50);
+                case "yellow":
+                    return new Color(255, 200, 50);
+                case "white":
+                    return Color.WHITE;
+                case "black":
+                    return new Color(50, 50, 50);
                 case "green":
                     return Color.GREEN;
                 case "blue":
                     return Color.BLUE;
-                case "yellow":
-                    return Color.YELLOW;
-                case "black":
-                    return Color.BLACK;
-                case "white":
-                    return Color.WHITE;
                 case "cyan":
                     return Color.CYAN;
                 case "magenta":

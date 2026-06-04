@@ -1,14 +1,12 @@
 package ai.ui;
 
-import javax.swing.*;
-
 import base.Params;
-import shared.MainRouter;
-import shared.ui_ports.Ex3UiPort;
-
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.*;
+import shared.MainRouter;
+import shared.ui_ports.Ex3UiPort;
 
 public class Ui {
     private MainRouter mainRouter;
@@ -28,9 +26,9 @@ public class Ui {
     }
 
     private void createAndShowWindow() {
-        JFrame frame = new JFrame("UI Window");
+        JFrame frame = new JFrame("Billiard Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(900, 500);
         frame.setLayout(new BorderLayout());
 
         drawingPanel = new DrawingPanel(points, circles, mainRouter);

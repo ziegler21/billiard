@@ -20,6 +20,7 @@ public abstract class Ex3UiPort {
     public abstract void updatePoint(int id, double x, double y);
 
     public abstract void addCircle(int id, double cx, double cy, double r);
+    public abstract void addCircle(int id, double cx, double cy, double r, String colorName);
     public abstract void updateCircle(int id, double cx, double cy, double r);
 
     public abstract void paintPoint(int pointId, String colorName);

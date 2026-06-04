@@ -1,14 +1,19 @@
 package ai.ui;
 
-import javax.swing.*;
+import base.Params;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Map;
-
-import base.Params;
+import javax.swing.*;
 import shared.MainRouter;
 
 public class DrawingPanel extends JPanel {
+    private static final Color TABLE_COLOR = new Color(100, 180, 220);
+    private double tableWidth = 760;
+    private double tableHeight = 360;
+    private double tableOffsetX = 20;
+    private double tableOffsetY = 20;
+    
     private Map<String, Point> points;
     private Map<String, Circle> circles;
     private MainRouter mainRouter;
@@ -46,8 +51,19 @@ public class DrawingPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        renderTable(g);
         renderPoints(g);
         renderCircles(g);
+    }
+
+    private void renderTable(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(TABLE_COLOR);
+        g2d.fillRect((int) tableOffsetX, (int) tableOffsetY, (int) tableWidth, (int) tableHeight);
+        
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(3.0f));
+        g2d.drawRect((int) tableOffsetX, (int) tableOffsetY, (int) tableWidth, (int) tableHeight);
     }
 
     private void renderPoints(Graphics g) {
@@ -67,10 +83,13 @@ public class DrawingPanel extends JPanel {
         for (Map.Entry<String, Circle> entry : circles.entrySet()) {
             Circle circle = entry.getValue();
             if (!circle.isBlinking) {
+                g2d.setColor(circle.color);
+                g2d.fillOval(circle.cx - circle.radius, circle.cy - circle.radius, circle.radius * 2,
+                        circle.radius * 2);
                 g2d.setColor(Color.BLACK);
+                g2d.setStroke(new BasicStroke(1.5f));
                 g2d.drawOval(circle.cx - circle.radius, circle.cy - circle.radius, circle.radius * 2,
                         circle.radius * 2);
-                g2d.drawString(entry.getKey(), circle.cx + circle.radius + 5, circle.cy);
             }
         }
     }
