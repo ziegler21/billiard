@@ -16,6 +16,7 @@ public class Table {
         setWidth(width);
         setHeight(height);
         setPocketRadius(10);
+        updateDefaultPockets();
     }
 
     public List<Ball> getBalls() {
@@ -99,6 +100,7 @@ public class Table {
             throw new IllegalArgumentException("Table width must be greater than 0");
         }
         this.width = width;
+        updateDefaultPockets();
     }
 
     public double getHeight() {
@@ -110,6 +112,7 @@ public class Table {
             throw new IllegalArgumentException("Table height must be greater than 0");
         }
         this.height = height;
+        updateDefaultPockets();
     }
 
     public double getPocketRadius() {
@@ -121,6 +124,23 @@ public class Table {
             throw new IllegalArgumentException("Pocket radius must be greater than 0");
         }
         this.pocketRadius = pocketRadius;
+        updateDefaultPockets();
+    }
+
+    private void updateDefaultPockets() {
+        if (width <= 0 || height <= 0 || pocketRadius <= 0) {
+            return;
+        }
+        this.pockets.clear();
+        double midX = width / 2.0;
+        // four corners
+        addPocket(0, 0);
+        addPocket(width, 0);
+        addPocket(0, height);
+        addPocket(width, height);
+        // two side middle pockets (left and right)
+        addPocket(midX, 0);
+        addPocket(midX, height);
     }
 
     public boolean isInPocket(double x, double y) {
