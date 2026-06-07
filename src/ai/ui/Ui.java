@@ -6,14 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import shared.MainRouter;
-import shared.ui_ports.Ex3UiPort;
+import shared.ui_ports.GameUiPort;
 
 public class Ui {
     private MainRouter mainRouter;
-    private Map<String, Point> points = new HashMap<>();
     private Map<String, Circle> circles = new HashMap<>();
     private DrawingPanel drawingPanel;
-    private Ex3UiPortImpl uiInstance;
+    private GameUiPortImpl uiInstance;
 
     public void setUiPorts() {
         // Panel will be created in createAndShowWindow, so we defer this
@@ -22,7 +21,7 @@ public class Ui {
     public void start(MainRouter mainRouter) {
         this.mainRouter = mainRouter;
         createAndShowWindow();
-        mainRouter.route("/ex3/start", Params.of());
+        mainRouter.route("/game/start", Params.of());
     }
 
     private void createAndShowWindow() {
@@ -31,7 +30,7 @@ public class Ui {
         frame.setSize(900, 500);
         frame.setLayout(new BorderLayout());
 
-        drawingPanel = new DrawingPanel(points, circles, mainRouter);
+        drawingPanel = new DrawingPanel(circles, mainRouter);
         frame.add(drawingPanel, BorderLayout.CENTER);
 
         // Add control panel with buttons
@@ -40,9 +39,9 @@ public class Ui {
 
         frame.setVisible(true);
 
-        // Initialize Ex3UiPortImpl with references to points, circles, and panel
-        uiInstance = new Ex3UiPortImpl(points, circles, drawingPanel);
-        Ex3UiPort.setInstance((Ex3UiPort) uiInstance);
+        // Initialize GameUiPortImpl with references to circles and panel
+        uiInstance = new GameUiPortImpl(circles, drawingPanel);
+        GameUiPort.setInstance(uiInstance);
     }
 
     private JPanel createControlPanel() {
