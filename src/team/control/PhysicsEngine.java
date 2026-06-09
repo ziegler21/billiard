@@ -5,7 +5,7 @@ import team.model.Table;
 import java.util.List;
 
 public class PhysicsEngine {
-    private final double FRICTION = 0.985; // מקדם חיכוך
+    private final double FRICTION = 0.8; // מקדם חיכוך
     private Table table;
 
     public PhysicsEngine(Table table) {
