@@ -8,20 +8,21 @@ import javax.swing.*;
 import shared.MainRouter;
 
 public class DrawingPanel extends JPanel {
-    private static final Color TABLE_COLOR = new Color(100, 180, 220);
+    private static final Color TABLE_COLOR = new Color(34, 139, 34); // Billiard green
     private double tableWidth = 760;
     private double tableHeight = 360;
     private double tableOffsetX = 20;
     private double tableOffsetY = 20;
     
-    private Map<String, Point> points;
     private Map<String, Circle> circles;
     private MainRouter mainRouter;
-    private String draggedPointId;
-    private String draggedCircleId;
+    
+    // Aiming mechanic
+    private Point startDragPoint = null;
+    private Point currentMousePoint = null;
+    private boolean draggingCueBall = false;
 
-    public DrawingPanel(Map<String, Point> points, Map<String, Circle> circles, MainRouter mainRouter) {
-        this.points = points;
+    public DrawingPanel(Map<String, Circle> circles, MainRouter mainRouter) {
         this.circles = circles;
         this.mainRouter = mainRouter;
 
@@ -33,8 +34,7 @@ public class DrawingPanel extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                draggedPointId = null;
-                draggedCircleId = null;
+                handleMouseReleased(e);
             }
         });
 
@@ -43,17 +43,20 @@ public class DrawingPanel extends JPanel {
             public void mouseDragged(MouseEvent e) {
                 handleMouseDragged(e);
             }
-        });
 
-        addMouseWheelListener(e -> handleMouseWheel(e));
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                currentMousePoint = new Point(e.getX(), e.getY());
+            }
+        });
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         renderTable(g);
-        renderPoints(g);
         renderCircles(g);
+        renderAimingLine(g);
     }
 
     private void renderTable(Graphics g) {
@@ -66,31 +69,29 @@ public class DrawingPanel extends JPanel {
         g2d.drawRect((int) tableOffsetX, (int) tableOffsetY, (int) tableWidth, (int) tableHeight);
     }
 
-    private void renderPoints(Graphics g) {
-        for (Map.Entry<String, Point> entry : points.entrySet()) {
-            Point point = entry.getValue();
-            g.setColor(point.color);
-            g.fillOval(point.x - 5, point.y - 5, 10, 10);
-            g.setColor(Color.BLACK);
-            g.drawString(entry.getKey(), point.x + 8, point.y - 5);
-        }
-    }
-
     private void renderCircles(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(2.5f));
 
         for (Map.Entry<String, Circle> entry : circles.entrySet()) {
             Circle circle = entry.getValue();
-            if (!circle.isBlinking) {
-                g2d.setColor(circle.color);
-                g2d.fillOval(circle.cx - circle.radius, circle.cy - circle.radius, circle.radius * 2,
-                        circle.radius * 2);
-                g2d.setColor(Color.BLACK);
-                g2d.setStroke(new BasicStroke(1.5f));
-                g2d.drawOval(circle.cx - circle.radius, circle.cy - circle.radius, circle.radius * 2,
-                        circle.radius * 2);
-            }
+            g2d.setColor(circle.color);
+            g2d.fillOval(circle.cx - circle.radius, circle.cy - circle.radius, circle.radius * 2,
+                    circle.radius * 2);
+            g2d.setColor(Color.BLACK);
+            g2d.setStroke(new BasicStroke(1.5f));
+            g2d.drawOval(circle.cx - circle.radius, circle.cy - circle.radius, circle.radius * 2,
+                    circle.radius * 2);
+        }
+    }
+
+    private void renderAimingLine(Graphics g) {
+        if (draggingCueBall && startDragPoint != null && currentMousePoint != null) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setColor(Color.WHITE);
+            g2d.setStroke(new BasicStroke(2.0f));
+            // Draw line from cue ball center to current mouse position
+            g2d.drawLine(startDragPoint.x, startDragPoint.y, currentMousePoint.x, currentMousePoint.y);
         }
     }
 
@@ -98,23 +99,14 @@ public class DrawingPanel extends JPanel {
         int x = e.getX();
         int y = e.getY();
 
-        // Check if a point was clicked
-        for (Map.Entry<String, Point> entry : points.entrySet()) {
-            Point p = entry.getValue();
-            if (Math.abs(p.x - x) < 10 && Math.abs(p.y - y) < 10) {
-                draggedPointId = entry.getKey();
-                return;
-            }
-        }
-
-        // Check if a circle was clicked
-        for (Map.Entry<String, Circle> entry : circles.entrySet()) {
-            Circle c = entry.getValue();
-            double dist = Math.sqrt(Math.pow(c.cx - x, 2) + Math.pow(c.cy - y, 2));
-            if (dist <= c.radius) {
-                draggedCircleId = entry.getKey();
-                // Stop any blinking animation on this circle
-                stopBlinking(entry.getKey());
+        // Check if cue ball (ID 0) was clicked
+        Circle cueBall = circles.get("0");
+        if (cueBall != null) {
+            double dist = Math.sqrt(Math.pow(cueBall.cx - x, 2) + Math.pow(cueBall.cy - y, 2));
+            if (dist <= cueBall.radius) {
+                draggingCueBall = true;
+                startDragPoint = new Point(cueBall.cx, cueBall.cy);
+                currentMousePoint = new Point(x, y);
                 return;
             }
         }
@@ -124,53 +116,25 @@ public class DrawingPanel extends JPanel {
         int x = e.getX();
         int y = e.getY();
 
-        if (draggedPointId != null) {
-            Point p = points.get(draggedPointId);
-            if (p != null) {
-                p.x = x;
-                p.y = y;
-                int pointId = Integer.parseInt(draggedPointId);
-                mainRouter.route("/ex3/point/move", Params.of(pointId, (double) x, (double) y));
-                repaint();
-            }
-        } else if (draggedCircleId != null) {
-            Circle c = circles.get(draggedCircleId);
-            if (c != null) {
-                c.cx = x;
-                c.cy = y;
-                int circleId = Integer.parseInt(draggedCircleId);
-                mainRouter.route("/ex3/circle/move", Params.of(circleId, (double) x, (double) y));
-                repaint();
-            }
+        if (draggingCueBall) {
+            currentMousePoint = new Point(x, y);
+            repaint();
         }
     }
 
-    private void handleMouseWheel(MouseWheelEvent e) {
-        int x = e.getX();
-        int y = e.getY();
-        int rotation = e.getWheelRotation();
-
-        // Check if hovering over a circle
-        for (Map.Entry<String, Circle> entry : circles.entrySet()) {
-            Circle c = entry.getValue();
-            double dist = Math.sqrt(Math.pow(c.cx - x, 2) + Math.pow(c.cy - y, 2));
-            if (dist <= c.radius + 10) {
-                // Stop any blinking animation on this circle
-                stopBlinking(entry.getKey());
-                int newRadius = Math.max(10, c.radius - rotation * 5);
-                c.radius = newRadius;
-                int circleId = Integer.parseInt(entry.getKey());
-                mainRouter.route("/ex3/circle/radius", Params.of(circleId, (double) newRadius));
-                repaint();
-                return;
-            }
-        }
-    }
-
-    public void stopBlinking(String circleId) {
-        Circle c = circles.get(circleId);
-        if (c != null) {
-            c.isBlinking = false;
+    private void handleMouseReleased(MouseEvent e) {
+        if (draggingCueBall && startDragPoint != null && currentMousePoint != null) {
+            // Calculate force vector from ball center to current mouse position
+            double forceX = startDragPoint.x - currentMousePoint.x;
+            double forceY = startDragPoint.y - currentMousePoint.y;
+            
+            // Send the strike command to the router
+            mainRouter.route("/game/ball/strike", Params.of(forceX, forceY));
+            
+            // Clear aiming line
+            draggingCueBall = false;
+            startDragPoint = null;
+            currentMousePoint = null;
             repaint();
         }
     }

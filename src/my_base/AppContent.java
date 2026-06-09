@@ -1,6 +1,6 @@
 package my_base;
 
-import team.control.Ex3Backend;
+import team.control.GameController;
 import team.model.Canvas;
 
 /*
@@ -10,17 +10,17 @@ import team.model.Canvas;
  */
 public class AppContent {
 	private Canvas canvas = new Canvas();
-	private Ex3Backend ex3Backend;
+	private GameController GameController;
 
 	public void initContent() {
-		ex3Backend = new Ex3Backend();
+		GameController = new GameController();
 		canvas.initCanvas();
 	};
 
 	public Canvas canvas() {
 		return canvas;
 	}	
-	public Ex3Backend ex3Backend() {
-		return ex3Backend;
+	public GameController game() {
+		return GameController;
 	}
 }

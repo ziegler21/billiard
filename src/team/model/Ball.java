@@ -21,6 +21,10 @@ public class Ball extends IdentifiedObject {
     private double y;
     private double radius;
     private BallStatus status;
+    
+    // משתני המהירות שנוספו
+    private double vx;
+    private double vy;
 
     public Ball(int id, BallType type, double x, double y, double radius) {
         super(id);
@@ -28,6 +32,10 @@ public class Ball extends IdentifiedObject {
         setPosition(x, y);
         setRadius(radius);
         this.status = BallStatus.ACTIVE;
+        
+        // אתחול מהירות לאפס - כדור תמיד מתחיל במצב מנוחה
+        this.vx = 0.0;
+        this.vy = 0.0;
     }
 
     public BallType getType() {
@@ -78,5 +86,23 @@ public class Ball extends IdentifiedObject {
 
     public boolean isPocketed() {
         return status == BallStatus.POCKETED;
+    }
+
+    // --- Getters & Setters עבור המהירות ---
+
+    public double getVx() {
+        return vx;
+    }
+
+    public void setVx(double vx) {
+        this.vx = vx;
+    }
+
+    public double getVy() {
+        return vy;
+    }
+
+    public void setVy(double vy) {
+        this.vy = vy;
     }
 }

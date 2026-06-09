@@ -13,41 +13,42 @@ public class Canvas {
         table = new Table(760, 360);
         table.setPocketRadius(18);
 
-        List<Point> pockets = new ArrayList<>();
-        // 4 corner pockets
-        pockets.add(new Point(0, 30, 30));
-        pockets.add(new Point(1, 770, 30));
-        pockets.add(new Point(2, 30, 370));
-        pockets.add(new Point(3, 770, 370));
-        // 2 side pockets (middle height on left and right)
-        pockets.add(new Point(4, 30, 200));
-        pockets.add(new Point(5, 770, 200));
-        table.setPockets(pockets);
-
         balls = new ArrayList<>();
         int nextId = 0;
 
-        balls.add(createBall(nextId++, Ball.BallType.WHITE, 70, 180));
+        // מיקום הכדור הלבן (באזור "קו הראש" של השולחן, משמאל)
+        balls.add(createBall(nextId++, Ball.BallType.WHITE, 150, 180));
 
-        double rackCenterX = 520;
-        double rackCenterY = 180;
-        double rowSpacingX = 24;
-        double rowSpacingY = 24;
+        // הגדרות הפירמידה
+        double rackTipX = 520; // קודקוד הפירמידה הפונה שמאלה
+        double rackCenterY = 180; // מרכז השולחן בציר האנכי
+        double R = 12; // רדיוס הכדור
+        
+        // המרחק האופקי בין השורות (צפוף יותר מקוטר כדי שיישבו אחד בתוך השני)
+        double rowSpacingX = R * Math.sqrt(3); 
+        // המרחק האנכי בין כדורים באותה שורה
+        double ballDiameter = R * 2;
 
+        // סידור תקני של כדורי 8-Ball:
+        // שחור באמצע השורה ה-3, פינות אחוריות בצבעים שונים.
         Ball.BallType[][] rows = new Ball.BallType[][] {
-            { Ball.BallType.BLACK },
-            { Ball.BallType.RED, Ball.BallType.YELLOW },
-            { Ball.BallType.RED, Ball.BallType.YELLOW, Ball.BallType.RED },
+            { Ball.BallType.YELLOW },
+            { Ball.BallType.RED, Ball.BallType.RED },
+            { Ball.BallType.YELLOW, Ball.BallType.BLACK, Ball.BallType.YELLOW },
             { Ball.BallType.RED, Ball.BallType.YELLOW, Ball.BallType.RED, Ball.BallType.YELLOW },
-            { Ball.BallType.YELLOW, Ball.BallType.RED, Ball.BallType.YELLOW, Ball.BallType.RED, Ball.BallType.YELLOW }
+            { Ball.BallType.RED, Ball.BallType.YELLOW, Ball.BallType.RED, Ball.BallType.YELLOW, Ball.BallType.RED }
         };
 
+        // יצירת הפירמידה
         for (int row = 0; row < rows.length; row++) {
             Ball.BallType[] rowTypes = rows[row];
-            double y = rackCenterY + (row * rowSpacingY);
+            
+            // ככל שמתקדמים בשורות, ה-X גדל (זזים ימינה על השולחן)
+            double x = rackTipX + (row * rowSpacingX);
 
             for (int col = 0; col < rowTypes.length; col++) {
-                double x = rackCenterX + ((col - ((rowTypes.length - 1) / 2.0)) * rowSpacingX);
+                // חישוב ה-Y כדי שהשורה תהיה ממורכזת סביב rackCenterY
+                double y = rackCenterY + ((col - ((rowTypes.length - 1) / 2.0)) * ballDiameter);
                 balls.add(createBall(nextId++, rowTypes[col], x, y));
             }
         }
@@ -56,6 +57,7 @@ public class Canvas {
         points = table.getPockets().toArray(new Point[0]);
         circles = new Circle[balls.size()];
 
+        // המרת נתוני המודל לאובייקטי הציור של ה-UI
         for (int i = 0; i < balls.size(); i++) {
             Ball ball = balls.get(i);
             circles[i] = new Circle(ball.getId(), new Point(ball.getId(), ball.getX(), ball.getY()), ball.getRadius());
