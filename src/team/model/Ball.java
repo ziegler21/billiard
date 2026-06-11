@@ -4,6 +4,10 @@ import base.IdentifiedObject;
 
 public class Ball extends IdentifiedObject {
 
+    public boolean isPotted() {
+    return isPocketed();
+}
+
     public enum BallType {
         WHITE,
         RED,

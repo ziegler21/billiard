@@ -10,7 +10,7 @@ public class Ex3Router implements SubRouter {
     private final Ex3Backend backend;
 
     public Ex3Router() {
-        this.backend = App.content().ex3Backend();
+        this.backend = App.content().Ex3Backend();
     }
 
     @Override
