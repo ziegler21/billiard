@@ -1,11 +1,11 @@
 package team.control;
 
+import java.util.HashSet;
+import java.util.Set;
 import my_base.App;
 import shared.ui_ports.GameUiPort;
 import team.model.Ball;
 import team.model.Canvas;
-import java.util.HashSet;
-import java.util.Set;
 
 public class GameController {
 
@@ -27,6 +27,13 @@ public class GameController {
 
         uiPort().log("Billiard game started! Ready for break.");
     }
+
+    
+    public void resetGame() {
+        App.content().resetCanvas();
+        startScenario();
+    }
+
 
     public void strikeCueBall(double forceX, double forceY) {
         Ball cueBall = App.content().canvas().getBalls().get(0);

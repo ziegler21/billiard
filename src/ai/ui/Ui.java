@@ -31,6 +31,17 @@ public class Ui {
         drawingPanel = new DrawingPanel(circles, mainRouter);
         frame.add(drawingPanel, BorderLayout.CENTER);
 
+        // Control panel with Reset button
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(e -> {
+            if (this.mainRouter != null) {
+                this.mainRouter.route("/game/reset", Params.of());
+            }
+        });
+        controlPanel.add(resetButton);
+        frame.add(controlPanel, BorderLayout.SOUTH);
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 

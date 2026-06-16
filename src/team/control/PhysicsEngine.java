@@ -1,14 +1,13 @@
 package team.control;
 
+import java.util.List;
 import team.model.Ball;
 import team.model.Point;
 import team.model.Table;
 
-import java.util.List;
-
 public class PhysicsEngine {
 
-    private static final double FRICTION         = 0.98;
+    private static final double FRICTION         = 0.99;
     private static final double WALL_RESTITUTION = 0.75;
     private static final double BALL_RESTITUTION = 0.97;
     private static final double STOP_THRESHOLD   = 0.15;

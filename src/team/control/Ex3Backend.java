@@ -40,6 +40,11 @@ public class Ex3Backend {
         evaluateAndCommandUi();
     }
 
+    public void resetGame() {
+        App.content().resetCanvas();
+        startScenario();
+    }
+
     // UI input events call these via router
     public void movePoint(int pointId, double x, double y) {
         Point p = App.content().canvas().getPoint(pointId);

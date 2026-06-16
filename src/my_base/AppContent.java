@@ -23,4 +23,9 @@ public class AppContent {
 	public GameController game() {
 		return GameController;
 	}
+
+	public void resetCanvas() {
+		canvas = new Canvas();
+		canvas.initCanvas();
+	}
 }

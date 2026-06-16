@@ -26,8 +26,8 @@ public class BilliardRouter implements SubRouter {
                 controller.strikeCueBall(forceX, forceY);
                 return null;
                 
-            case "/game/reset":
-                // למימוש עתידי מכפתור ה-Reset
+            case "/reset":
+                controller.resetGame();
                 return null;
 
             default:
