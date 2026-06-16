@@ -18,8 +18,11 @@ public class GameController {
     }
 
     public void startScenario() {
+
         Canvas canvas = App.content().canvas();
         physicsEngine = new PhysicsEngine(canvas.getTable());
+
+        base.AudioPlayer.play("sounds/Pool Hall Background Noise [HlZm7B5zdls].wav", 1);
 
         for (Ball b : canvas.getBalls()) {
             uiPort().addBall(b.getId(), b.getType().name(), b.getX(), b.getY(), b.getRadius());
@@ -36,6 +39,7 @@ public class GameController {
 
 
     public void strikeCueBall(double forceX, double forceY) {
+        base.AudioPlayer.play("sounds/freesound_community-flint-strike-38491.wav", 1);
         Ball cueBall = App.content().canvas().getBalls().get(0);
         cueBall.setVx(forceX * 0.1);
         cueBall.setVy(forceY * 0.1);
