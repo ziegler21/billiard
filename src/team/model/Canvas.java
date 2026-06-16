@@ -11,7 +11,7 @@ public class Canvas {
 
     public void initCanvas() {
         table = new Table(760, 360);
-        table.setPocketRadius(18);
+        table.setPocketRadius(24);
 
         balls = new ArrayList<>();
         int nextId = 0;

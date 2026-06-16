@@ -16,7 +16,7 @@ public class DrawingPanel extends JPanel {
     private static final Color FELT_COLOR   = new Color(22, 110, 35);
     private static final Color FELT_EDGE    = new Color(15, 80, 25);
     private static final Color POCKET_COLOR = new Color(5, 5, 5);
-    private static final int   POCKET_RADIUS = 18;
+    private static final int   POCKET_RADIUS = 24;
     private static final int   FRAME_THICK   = 38;
 
     private double tableWidth   = 760;

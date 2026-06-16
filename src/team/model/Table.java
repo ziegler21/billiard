@@ -15,7 +15,7 @@ public class Table {
     public Table(double width, double height) {
         setWidth(width);
         setHeight(height);
-        setPocketRadius(10);
+        setPocketRadius(24);
         updateDefaultPockets();
     }
 
