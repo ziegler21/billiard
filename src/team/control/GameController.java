@@ -22,7 +22,7 @@ public class GameController {
         Canvas canvas = App.content().canvas();
         physicsEngine = new PhysicsEngine(canvas.getTable());
 
-        base.AudioPlayer.play("sounds/Pool Hall Background Noise [HlZm7B5zdls].wav", 1);
+        //base.AudioPlayer.play("sounds/Pool Hall Background Noise [HlZm7B5zdls].wav", 1);
 
         for (Ball b : canvas.getBalls()) {
             uiPort().addBall(b.getId(), b.getType().name(), b.getX(), b.getY(), b.getRadius());
