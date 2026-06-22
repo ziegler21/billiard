@@ -18,7 +18,9 @@ public abstract class GameUiPort {
     public abstract void addBall(int id, String ballType, double x, double y, double radius);
     public abstract void updateBallPosition(int id, double x, double y);
     public abstract void hideBall(int id); // להעלמת כדור שנפל לחור
-    public abstract void updateScoreBoard(String turn, int p1Score, int p2Score); // לעדכון התוצאות
+    public abstract void updateScoreBoard(String p1Label, String p2Label, String turn); // לעדכון התוצאות
     public abstract void showMessage(String message); // להקפצת הודעת "עבירה!" או "ניצחון!"
     public abstract void log(String message);
+    public abstract void resetBalls();
+    public abstract void setBallInHand(boolean active);
 }

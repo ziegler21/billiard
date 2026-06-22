@@ -158,4 +158,14 @@ public class Table {
     public boolean isOutOfBounds(double x, double y) {
         return x < 0 || y < 0 || x > width || y > height;
     }
+
+    // מחזיר true אם הכדור הלבן נפל לחור (עבירה)
+    public boolean isBallInPocket() {
+        for (Ball ball : balls) {
+            if (ball.getType() == Ball.BallType.WHITE && ball.isPocketed()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -79,5 +79,12 @@ public class GameState {
     public void resetState() {
         activePlayerIndex = 0;
         status = GameStatus.BEFORE_BREAK;
+        foul = false;
     }
+
+    private boolean foul = false;
+
+    public boolean isFoul()              { return foul; }
+    public void    setFoul(boolean foul) { this.foul = foul; }
+    public void    clearFoul()           { this.foul = false; }
 }

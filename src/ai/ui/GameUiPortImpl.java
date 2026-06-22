@@ -2,23 +2,23 @@ package ai.ui;
 
 import java.awt.Color;
 import java.util.Map;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import shared.ui_ports.GameUiPort;
 
 public class GameUiPortImpl extends GameUiPort {
     private Map<String, Circle> circles;
-    private JPanel panel;
+    private DrawingPanel panel;
 
-    public GameUiPortImpl(Map<String, Circle> circles, JPanel panel) {
+    public GameUiPortImpl(Map<String, Circle> circles, DrawingPanel panel) {
         this.circles = circles;
-        this.panel = panel;
+        this.panel   = panel;
     }
 
     @Override
     public void addBall(int id, String ballType, double x, double y, double radius) {
         Color color = parseBallColor(ballType);
-        Circle circle = new Circle((int) x, (int) y, (int) radius, color);
-        circles.put(String.valueOf(id), circle);
+        circles.put(String.valueOf(id), new Circle((int) x, (int) y, (int) radius, color));
         panel.repaint();
     }
 
@@ -39,13 +39,26 @@ public class GameUiPortImpl extends GameUiPort {
     }
 
     @Override
-    public void updateScoreBoard(String turn, int p1Score, int p2Score) {
-        log("Turn: " + turn + " | Player 1: " + p1Score + " | Player 2: " + p2Score);
+    public void resetBalls() {
+        circles.clear();
+        panel.repaint();
+    }
+
+    @Override
+    public void setBallInHand(boolean active) {
+        panel.setBallInHandMode(active);
+    }
+
+    @Override
+    public void updateScoreBoard(String p1Label, String p2Label, String turn) {
+        panel.setScoreBoard(turn, p1Label, p2Label);
     }
 
     @Override
     public void showMessage(String message) {
-        log("Message: " + message);
+        SwingUtilities.invokeLater(() ->
+            JOptionPane.showMessageDialog(panel, message, "Billiard", JOptionPane.WARNING_MESSAGE)
+        );
     }
 
     @Override
@@ -54,21 +67,12 @@ public class GameUiPortImpl extends GameUiPort {
     }
 
     private Color parseBallColor(String ballType) {
-        try {
-            switch (ballType.toUpperCase()) {
-                case "WHITE":
-                    return Color.WHITE;
-                case "RED":
-                    return new Color(200, 50, 50);
-                case "YELLOW":
-                    return new Color(255, 200, 50);
-                case "BLACK":
-                    return new Color(50, 50, 50);
-                default:
-                    return Color.BLACK;
-            }
-        } catch (Exception e) {
-            return Color.BLACK;
+        switch (ballType.toUpperCase()) {
+            case "WHITE":  return Color.WHITE;
+            case "RED":    return new Color(200, 50, 50);
+            case "YELLOW": return new Color(255, 200, 50);
+            case "BLACK":  return new Color(50, 50, 50);
+            default:       return Color.BLACK;
         }
     }
 }

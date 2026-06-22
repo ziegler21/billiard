@@ -25,6 +25,12 @@ public class BilliardRouter implements SubRouter {
                 double forceY = p.getDouble(1);
                 controller.strikeCueBall(forceX, forceY);
                 return null;
+
+            case "/ball/place":
+                double placeX = p.getDouble(0);
+                double placeY = p.getDouble(1);
+                controller.placeCueBall(placeX, placeY);
+                return null;
                 
             case "/reset":
                 controller.resetGame();
