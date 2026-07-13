@@ -123,9 +123,10 @@ public class GameController {
         // אם הכדור הלבן נפל — מחזירים אותו לשולחן במיקום ברירת מחדל
         if (cueBallPocketed) respawnCueBall();
 
-        String reason = cueBallPocketed ? "הכדור הלבן נפל!" : "לא פגע בשום כדור!";
-        uiPort().showMessage("עבירה!  " + foulPlayer.getName() + "  —  " + reason
-                + "\nכדור ביד ל-" + gameState.getActivePlayer().getName());
+        String reason = cueBallPocketed ? "הכדור הלבן נפל לחור" : "הכדור הלבן לא פגע בשום כדור";
+        uiPort().showMessage("עבירה!\n"
+                + reason + "\n\n"
+                + "כדור ביד לשחקן: " + gameState.getActivePlayer().getName());
 
         // מפעילים מצב Ball in Hand — השחקן הבא מניח את הכדור הלבן
         uiPort().setBallInHand(true);
@@ -184,12 +185,15 @@ public class GameController {
 
         if (clearedOwn) {
             gameState.setStatus(GameState.GameStatus.GAME_OVER);
-            uiPort().showMessage("🎉  " + active.getName() + " ניצח!\nהכדורים ריקים + כדור שחור!");
+            uiPort().showMessage("ניצחון!\n\n"
+                    + active.getName() + " ניקה את כל הכדורים והכניס את הכדור השחור.\n"
+                    + "כל הכבוד!");
         } else {
             gameState.setStatus(GameState.GameStatus.GAME_OVER);
             Player winner = getOpponent(active);
-            uiPort().showMessage(active.getName() + " הכניס את הכדור השחור מוקדם מדי!\n"
-                    + "  →  " + winner.getName() + " ניצח!");
+            uiPort().showMessage("הפסד!\n\n"
+                    + active.getName() + " הכניס את הכדור השחור לפני הזמן.\n\n"
+                    + "ניצח: " + winner.getName());
         }
     }
 
@@ -201,8 +205,9 @@ public class GameController {
         Ball.BallType opponentType = (type == Ball.BallType.RED) ? Ball.BallType.YELLOW : Ball.BallType.RED;
         active.assignBallType(type);
         getOpponent(active).assignBallType(opponentType);
-        uiPort().log("Table assigned! " + active.getName() + "=" + type
-                + ", " + getOpponent(active).getName() + "=" + opponentType);
+        uiPort().showMessage("השולחן חולק!\n\n"
+                + active.getName() + " — " + (type == Ball.BallType.RED ? "כדורים אדומים" : "כדורים צהובים") + "\n"
+                + getOpponent(active).getName() + " — " + (opponentType == Ball.BallType.RED ? "כדורים אדומים" : "כדורים צהובים"));
     }
 
     // ------------------------------------------------------------------ //

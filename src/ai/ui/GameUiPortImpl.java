@@ -56,8 +56,11 @@ public class GameUiPortImpl extends GameUiPort {
 
     @Override
     public void showMessage(String message) {
+        String html = "<html><div style='direction:rtl; text-align:right; font-size:14px; padding:4px 8px'>"
+                + message.replace("\n", "<br>")
+                + "</div></html>";
         SwingUtilities.invokeLater(() ->
-            JOptionPane.showMessageDialog(panel, message, "Billiard", JOptionPane.WARNING_MESSAGE)
+            JOptionPane.showMessageDialog(panel, html, "Billiard", JOptionPane.INFORMATION_MESSAGE)
         );
     }
 
